@@ -1,5 +1,4 @@
 import pymem
-import struct
 import time
 import keyboard
 import threading
@@ -11,8 +10,8 @@ PROCESS_NAME = "DriveBeyondHorizons-Win64-Shipping.exe"
 
 # Endereços de memória encontrados com o Cheat Engine (formato hexadecimal)
 ADDRESSES = [
-    0x1F476405400,  # Primeiro endereço
-    0x1F476E39FC0   # Segundo endereço
+    0x1EA309C39C0,  # Primeiro endereço
+    0x1E99CBFE0A0   # Segundo endereço
 ]
 
 # Valor que você quer definir
@@ -78,8 +77,6 @@ def main():
         print("\nControles:")
         print("  F1: Iniciar modificação contínua (modo agressivo)")
         print("  F2: Restaurar valores originais")
-        print("  F3: Mudar valor para infinito")
-        print("  F4: Mudar valor para 999.0")
         print("  ESC: Sair")
 
         # Evento para controlar o thread
@@ -113,39 +110,6 @@ def main():
                         pm.write_double(address, original_values[i])
                     except:
                         print(f"Não foi possível restaurar o endereço: 0x{address:X}")
-                time.sleep(0.3)
-
-            # Altera para infinito
-            if keyboard.is_pressed('F3') and writer_thread is not None:
-                stop_thread.set()
-                writer_thread.join()
-
-                NEW_VALUE_INF = float('inf')
-                print(f"\n[ALTERANDO] Valor para infinito")
-
-                stop_thread.clear()
-                writer_thread = threading.Thread(
-                    target=continuous_writer,
-                    args=(pm, ADDRESSES, NEW_VALUE_INF, stop_thread)
-                )
-                writer_thread.daemon = True
-                writer_thread.start()
-                time.sleep(0.3)
-
-            # Altera para 999.0
-            if keyboard.is_pressed('F4') and writer_thread is not None:
-                stop_thread.set()
-                writer_thread.join()
-
-                print(f"\n[ALTERANDO] Valor para 999.0")
-
-                stop_thread.clear()
-                writer_thread = threading.Thread(
-                    target=continuous_writer,
-                    args=(pm, ADDRESSES, 999.0, stop_thread)
-                )
-                writer_thread.daemon = True
-                writer_thread.start()
                 time.sleep(0.3)
 
             # Sai do script
